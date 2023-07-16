@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid"
 import { Component } from "react"
+import PropTypes from 'prop-types';
 
 class ContactForm extends Component {
 
@@ -17,31 +18,39 @@ class ContactForm extends Component {
 
     handleSubmit = (e) => {
         const { name, number } = this.state
-        const {createContact} = this.props
+        const { createContact, contacts } = this.props
+        const isExisting = contacts.find(contact => contact.name === name) 
         e.preventDefault()
-        
+        if (isExisting) {
+            alert(`${name} is already in contacts.`)
+            return
+        }
         const contact = {
             name,
             number,
             id: nanoid(),
         }
-    createContact(contact)
+        createContact(contact)
+        this.reset()
+    }
+
+    reset = () => {
+        this.setState({ number: '', name: '' })
     }
      
     render() {
         const {name, number} = this.state
         return (
             <form onSubmit={this.handleSubmit}>
-                <h2>{this.props.title}</h2>
                 <label htmlFor="#">Name </label>
                 <input type="text" name="name"
-                    // pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+                    pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
                     title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
                     onChange={this.handleChange} value={name} required  />
                 
                 <label htmlFor="#">Number</label>
                 <input type="tel" name="number"
-                    // pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+                    pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
                     title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
                     onChange={this.handleChange} value={number} required />
                 
@@ -51,3 +60,9 @@ class ContactForm extends Component {
 }
 
 export default ContactForm
+
+
+ContactForm.propTypes = {
+    contacts: PropTypes.arrayOf(PropTypes.any.isRequired),
+    createContact: PropTypes.func.isRequired,
+}

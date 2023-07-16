@@ -1,9 +1,10 @@
 import Contact from "components/Contact/Contact";
 import { Component } from "react";
+import PropTypes from 'prop-types';
 
 class ContactList extends Component {
     render() {
-        const { contacts } = this.props
+        const { contacts, deleteContact } = this.props
         return (
             <ul>
               {contacts.map(contact => {
@@ -11,7 +12,8 @@ class ContactList extends Component {
                   <Contact
                     key={contact.id}
                     contact={contact}
-                  />
+                    onClick={(id) => deleteContact(id)}    
+                    />
                 );
               })}
             </ul>
@@ -20,3 +22,8 @@ class ContactList extends Component {
 }
 
 export default ContactList
+
+ContactList.propTypes = {
+    contacts: PropTypes.arrayOf(PropTypes.any.isRequired),
+    deleteContact: PropTypes.func.isRequired,
+}
